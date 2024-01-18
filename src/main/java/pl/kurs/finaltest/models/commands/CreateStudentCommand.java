@@ -1,15 +1,19 @@
 package pl.kurs.finaltest.models.commands;
 
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import pl.kurs.finaltest.annotations.PersonCommandSubType;
 import pl.kurs.finaltest.models.Student;
 
-@PersonCommandSubType("CreateStudentCommand")
+@PersonCommandSubType("Student")
 public class CreateStudentCommand extends CreatePersonCommand {
     private String completedUniversity;
+    @NotNull
     private Integer studyYear;
+    @NotBlank
     private String fieldOfStudy;
-    private double scholarship;
+    private Double scholarship;
 
     public String getCompletedUniversity() {
         return completedUniversity;

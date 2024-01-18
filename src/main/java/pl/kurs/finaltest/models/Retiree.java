@@ -1,17 +1,15 @@
 package pl.kurs.finaltest.models;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
 import pl.kurs.finaltest.models.dto.PersonDto;
 import pl.kurs.finaltest.models.dto.RetireeDto;
+
+import java.io.Serial;
 
 @Entity
 public class Retiree extends Person {
     private static final long serialVersionUID = 1L;
-
-    @Column
     private double pension;
-
-    @Column
     private int workedYears;
 
     public Retiree() {

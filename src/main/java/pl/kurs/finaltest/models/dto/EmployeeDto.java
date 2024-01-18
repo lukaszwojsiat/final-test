@@ -1,7 +1,5 @@
 package pl.kurs.finaltest.models.dto;
 
-import pl.kurs.finaltest.models.Person;
-
 import java.time.LocalDate;
 
 public class EmployeeDto extends PersonDto {

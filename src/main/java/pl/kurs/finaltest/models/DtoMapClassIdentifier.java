@@ -1,6 +1,5 @@
 package pl.kurs.finaltest.models;
 
-import pl.kurs.finaltest.models.Person;
 import pl.kurs.finaltest.models.dto.PersonDto;
 
 public interface DtoMapClassIdentifier {

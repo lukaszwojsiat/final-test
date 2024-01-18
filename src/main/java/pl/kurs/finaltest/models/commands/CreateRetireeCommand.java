@@ -1,13 +1,16 @@
 package pl.kurs.finaltest.models.commands;
 
 
+import jakarta.validation.constraints.NotNull;
 import pl.kurs.finaltest.annotations.PersonCommandSubType;
 import pl.kurs.finaltest.models.Retiree;
 
-@PersonCommandSubType("CreateRetireeCommand")
+@PersonCommandSubType("Retiree")
 public class CreateRetireeCommand extends CreatePersonCommand{
-    private double pension;
-    private int workedYears;
+    @NotNull
+    private Double pension;
+    @NotNull
+    private Integer workedYears;
 
     public double getPension() {
         return pension;

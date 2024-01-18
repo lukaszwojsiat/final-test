@@ -1,29 +1,24 @@
 package pl.kurs.finaltest.models.commands;
 
+import jakarta.validation.constraints.NotNull;
 import pl.kurs.finaltest.annotations.PersonCommandSubType;
 import pl.kurs.finaltest.models.Person;
 import pl.kurs.finaltest.models.Retiree;
 
 
-@PersonCommandSubType("UpdateStudentCommand")
-public class UpdateRetireeCommand extends UpdatePersonCommand{
-    private double pension;
-    private int workedYears;
+@PersonCommandSubType("Retiree")
+public class UpdateRetireeCommand extends UpdatePersonCommand {
+    @NotNull
+    private Double pension;
+    @NotNull
+    private Integer workedYears;
 
     public double getPension() {
         return pension;
     }
 
-    public void setPension(double pension) {
-        this.pension = pension;
-    }
-
     public int getWorkedYears() {
         return workedYears;
-    }
-
-    public void setWorkedYears(int workedYears) {
-        this.workedYears = workedYears;
     }
 
     @Override

@@ -1,23 +1,15 @@
 package pl.kurs.finaltest.models;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
 import pl.kurs.finaltest.models.dto.PersonDto;
 import pl.kurs.finaltest.models.dto.StudentDto;
 
 @Entity
 public class Student extends Person {
     private static final long serialVersionUID = 1L;
-
-    @Column
     private String completedUniversity;
-
-    @Column
     private int studyYear;
-
-    @Column
     private String fieldOfStudy;
-
-    @Column
     private double scholarship;
 
     public Student() {

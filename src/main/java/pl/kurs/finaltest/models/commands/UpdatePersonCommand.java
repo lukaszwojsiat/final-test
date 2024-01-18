@@ -2,88 +2,62 @@ package pl.kurs.finaltest.models.commands;
 
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import pl.kurs.finaltest.validations.Pesel;
 
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "type", visible = true)
-public abstract class UpdatePersonCommand implements CommandMapClassIdentifier{
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "type")
+public abstract class UpdatePersonCommand implements CommandMapClassIdentifier {
+    @NotNull
     private Long id;
     private String type;
+    @NotBlank
     private String firstName;
+    @NotBlank
     private String lastName;
+    @Pesel
     private String pesel;
-    private double height;
-    private double weight;
+    private Double height;
+    private Double weight;
+    @Email
     private String email;
+    @NotNull
     private Integer version;
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setVersion(Integer version) {
-        this.version = version;
-    }
-
-    public int getVersion() {
-        return version;
-    }
-
     public String getType() {
         return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
     }
 
     public String getFirstName() {
         return firstName;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
     public String getLastName() {
         return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
     }
 
     public String getPesel() {
         return pesel;
     }
 
-    public void setPesel(String pesel) {
-        this.pesel = pesel;
-    }
-
-    public double getHeight() {
+    public Double getHeight() {
         return height;
     }
 
-    public void setHeight(double height) {
-        this.height = height;
-    }
-
-    public double getWeight() {
+    public Double getWeight() {
         return weight;
-    }
-
-    public void setWeight(double weight) {
-        this.weight = weight;
     }
 
     public String getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public Integer getVersion() {
+        return version;
     }
 }

@@ -1,40 +1,33 @@
 package pl.kurs.finaltest.models;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
-import org.hibernate.validator.constraints.pl.PESEL;
 
 import java.io.Serializable;
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-public abstract class Person implements Serializable, DtoMapClassIdentifier{
+@DiscriminatorColumn(name = "type")
+@Table(uniqueConstraints = {
+        @UniqueConstraint(name = "UC_PERSON_EMAIL", columnNames = "email"),
+        @UniqueConstraint(name = "UC_PERSON_PESEL", columnNames = "pesel")
+})
+public abstract class Person implements Serializable, DtoMapClassIdentifier {
     private static final long serialVersionUID = 1L;
-
+    @Column(insertable = false, updatable = false)
+    private String type;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @Column(nullable = false)
     private String firstName;
-
     @Column(nullable = false)
     private String lastName;
-
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String pesel;
-
-    @Column(nullable = false)
     private double height;
-
-    @Column(nullable = false)
     private double weight;
-
-    @Email
-    @Column
     private String email;
-
     @Version
     private int version;
 

@@ -1,6 +1,6 @@
 package pl.kurs.finaltest.models;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
 import pl.kurs.finaltest.models.dto.EmployeeDto;
 import pl.kurs.finaltest.models.dto.PersonDto;
 
@@ -9,14 +9,8 @@ import java.time.LocalDate;
 @Entity
 public class Employee extends Person {
     private static final long serialVersionUID = 1L;
-
-    @Column
     private LocalDate employmentStartDate;
-
-    @Column
     private String position;
-
-    @Column
     private double salary;
 
     public Employee() {
