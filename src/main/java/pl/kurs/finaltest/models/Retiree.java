@@ -5,6 +5,7 @@ import pl.kurs.finaltest.models.dto.PersonDto;
 import pl.kurs.finaltest.models.dto.RetireeDto;
 
 import java.io.Serial;
+import java.util.Objects;
 
 @Entity
 public class Retiree extends Person {
@@ -35,6 +36,20 @@ public class Retiree extends Person {
 
     public void setWorkedYears(int workedYears) {
         this.workedYears = workedYears;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Retiree retiree = (Retiree) o;
+        return Double.compare(retiree.pension, pension) == 0 && workedYears == retiree.workedYears;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), pension, workedYears);
     }
 
     @Override

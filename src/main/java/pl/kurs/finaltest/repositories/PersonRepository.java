@@ -2,10 +2,15 @@ package pl.kurs.finaltest.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
+import pl.kurs.finaltest.models.Employee;
 import pl.kurs.finaltest.models.Person;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface PersonRepository extends JpaRepository<Person, Long>, JpaSpecificationExecutor<Person> {
-    List<Person> findAllByFirstName(String firstName);
+
+    @Query(value = "select p from Person p WHERE p.type = 'Employee' and p.id = :id")
+    Optional<Employee> getEmployeeWithPositions(Long id);
 }

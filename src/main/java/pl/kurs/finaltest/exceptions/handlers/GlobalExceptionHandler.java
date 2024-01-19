@@ -1,6 +1,5 @@
 package pl.kurs.finaltest.exceptions.handlers;
 
-import jakarta.validation.ConstraintViolationException;
 import org.hibernate.StaleObjectStateException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -9,8 +8,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import pl.kurs.finaltest.exceptions.ExceptionResponseDto;
-import pl.kurs.finaltest.exceptions.WrongPersonInformationException;
+import pl.kurs.finaltest.exceptions.*;
 import pl.kurs.finaltest.exceptions.constraints.ConstraintErrorHandler;
 
 import java.sql.Timestamp;
@@ -62,6 +60,16 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exceptionResponseDto);
     }
 
+    @ExceptionHandler({InvalidPositionDatesException.class})
+    public ResponseEntity<ExceptionResponseDto> handleInvalidPositionDatesException(InvalidPositionDatesException e) {
+        ExceptionResponseDto exceptionResponseDto = new ExceptionResponseDto(
+                List.of(e.getMessage()),
+                "BAD_REQUEST",
+                Timestamp.from(Instant.now())
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exceptionResponseDto);
+    }
+
     @ExceptionHandler({HttpMessageNotReadableException.class})
     public ResponseEntity<ExceptionResponseDto> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
         ExceptionResponseDto exceptionResponseDto = new ExceptionResponseDto(
@@ -70,6 +78,26 @@ public class GlobalExceptionHandler {
                 Timestamp.from(Instant.now())
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exceptionResponseDto);
+    }
+
+    @ExceptionHandler({WrongTypeOfPersonException.class})
+    public ResponseEntity<ExceptionResponseDto> handleWrongTypeOfPersonException(WrongTypeOfPersonException e) {
+        ExceptionResponseDto exceptionResponseDto = new ExceptionResponseDto(
+                List.of(e.getMessage()),
+                "BAD_REQUEST",
+                Timestamp.from(Instant.now())
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exceptionResponseDto);
+    }
+
+    @ExceptionHandler({ResourceNoFoundException.class})
+    public ResponseEntity<ExceptionResponseDto> handleResourceNoFoundException(ResourceNoFoundException e) {
+        ExceptionResponseDto exceptionResponseDto = new ExceptionResponseDto(
+                List.of(e.getMessage()),
+                "NOT_FOUND",
+                Timestamp.from(Instant.now())
+        );
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exceptionResponseDto);
     }
 
     @ExceptionHandler({DataIntegrityViolationException.class})

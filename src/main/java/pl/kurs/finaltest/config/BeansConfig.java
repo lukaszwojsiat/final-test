@@ -3,6 +3,7 @@ package pl.kurs.finaltest.config;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.reflections.Reflections;
@@ -18,8 +19,9 @@ import java.util.Set;
 public class BeansConfig {
 
     @Bean
-    public ModelMapper getModelMapper() {
+    public ModelMapper getModelMapper(Set<Converter> converters) {
         ModelMapper mapper = new ModelMapper();
+        converters.forEach(mapper::addConverter);
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         return mapper;
     }

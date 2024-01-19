@@ -7,13 +7,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import pl.kurs.finaltest.models.Employee;
+import pl.kurs.finaltest.models.EmployeePosition;
 import pl.kurs.finaltest.models.Person;
+import pl.kurs.finaltest.models.commands.CreateEmployeePositionCommand;
 import pl.kurs.finaltest.models.commands.CreatePersonCommand;
 import pl.kurs.finaltest.models.commands.UpdatePersonCommand;
-import pl.kurs.finaltest.models.dto.PersonDto;
-import pl.kurs.finaltest.models.dto.StatusDto;
+import pl.kurs.finaltest.models.dto.*;
 import pl.kurs.finaltest.services.PersonService;
-import pl.kurs.finaltest.specifications.PersonSpec;
+import pl.kurs.finaltest.specifications.PersonSpecification;
 
 import java.io.IOException;
 import java.util.List;
@@ -31,11 +33,26 @@ public class PersonController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PersonDto>> getAllBy(PersonSpec personSpec, Pageable pageable) {
-        List<PersonDto> persons = personService.getAllBy(personSpec, pageable).stream()
+    public ResponseEntity<List<PersonDto>> getAllPersonsBy(PersonSpecification personSpecification, Pageable pageable) {
+        List<PersonDto> persons = personService.getAllBy(personSpecification, pageable).stream()
                 .map(p -> modelMapper.map(p, p.dtoClassMapTo()))
                 .collect(Collectors.toList());
         return ResponseEntity.status(HttpStatus.OK).body(persons);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<PersonDto> getPersonById(@PathVariable Long id) {
+        Person person = personService.getById(id);
+        return ResponseEntity.ok(modelMapper.map(person, person.dtoClassMapTo()));
+    }
+
+    @GetMapping("/{id}/positions")
+    public ResponseEntity<List<EmployePositionDto>> getEmployeePositions(@PathVariable Long id) {
+        List<EmployeePosition> positions = personService.getEmployeePositions(id);
+        return ResponseEntity.ok(positions.stream()
+                .map(ep ->modelMapper.map(positions, EmployePositionDto.class))
+                .collect(Collectors.toList())
+        );
     }
 
 
@@ -53,10 +70,17 @@ public class PersonController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new StatusDto("Osoby z pliku csv zostaly dodane."));
     }
 
+    @PostMapping("/{id}/position")
+    public ResponseEntity<EmployeeDto> addPositionToEmployee(@PathVariable Long id, @RequestBody CreateEmployeePositionCommand command) {
+        Employee employee = personService.addPosition(id, command);
+        return ResponseEntity.status(HttpStatus.CREATED).body(modelMapper.map(employee, EmployeeDto.class));
+    }
+
     @PutMapping
     public ResponseEntity<PersonDto> editPerson(@RequestBody @Valid UpdatePersonCommand dataToEdit) {
         Person personToEdit = modelMapper.map(dataToEdit, dataToEdit.classMapTo());
         Person editedPerson = personService.edit(personToEdit);
         return ResponseEntity.status(HttpStatus.OK).body(modelMapper.map(editedPerson, editedPerson.dtoClassMapTo()));
     }
+
 }

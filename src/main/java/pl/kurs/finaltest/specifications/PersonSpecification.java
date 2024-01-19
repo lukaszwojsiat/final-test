@@ -14,15 +14,15 @@ import pl.kurs.finaltest.models.Person;
         @Spec(path = "lastName", spec = LikeIgnoreCase.class),
         @Spec(path = "pesel", spec = LikeIgnoreCase.class),
         @Spec(path = "email", spec = LikeIgnoreCase.class),
-        @Spec(path = "employmentStartDate", params = {"employmentStartDateFrom","employmentStartDateTo"}, spec = Between.class),
-        @Spec(path = "position", spec = LikeIgnoreCase.class),
-        @Spec(path = "salary", params = {"salaryFrom","salaryTo"}, spec = Between.class),
+        @Spec(path = "employmentStartDate", params = {"employmentStartDateFrom", "employmentStartDateTo"}, spec = Between.class),
+        @Spec(path = "actualPosition", spec = LikeIgnoreCase.class),
+        @Spec(path = "actualSalary", params = {"salaryFrom", "salaryTo"}, spec = Between.class),
         @Spec(path = "completedUniversity", spec = LikeIgnoreCase.class),
-        @Spec(path = "studyYear", params = {"studyYearFrom","studyYearTo"}, spec = Between.class),
+        @Spec(path = "studyYear", params = {"studyYearFrom", "studyYearTo"}, spec = Between.class),
         @Spec(path = "fieldOfStudy", spec = LikeIgnoreCase.class),
-        @Spec(path = "scholarship", params = {"scholarshipFrom","scholarshipTo"}, spec = Between.class),
-        @Spec(path = "pension", params = {"pensionFrom","pensionTo"}, spec = Between.class),
-        @Spec(path = "workedYears", params = {"workedYearsFrom","workedYearsTo"}, spec = Between.class)
+        @Spec(path = "scholarship", params = {"scholarshipFrom", "scholarshipTo"}, spec = Between.class),
+        @Spec(path = "pension", params = {"pensionFrom", "pensionTo"}, spec = Between.class),
+        @Spec(path = "workedYears", params = {"workedYearsFrom", "workedYearsTo"}, spec = Between.class)
 })
-public interface PersonSpec extends Specification<Person> {
+public interface PersonSpecification extends Specification<Person> {
 }

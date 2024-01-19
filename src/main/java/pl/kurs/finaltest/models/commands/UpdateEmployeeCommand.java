@@ -14,20 +14,20 @@ public class UpdateEmployeeCommand extends UpdatePersonCommand {
     @PastOrPresent
     private LocalDate employmentStartDate;
     @NotBlank
-    private String position;
+    private String actualPosition;
     @NotNull
-    private double salary;
+    private double actualSalary;
 
     public LocalDate getEmploymentStartDate() {
         return employmentStartDate;
     }
 
-    public String getPosition() {
-        return position;
+    public String getActualPosition() {
+        return actualPosition;
     }
 
-    public double getSalary() {
-        return salary;
+    public double getActualSalary() {
+        return actualSalary;
     }
 
     @Override
