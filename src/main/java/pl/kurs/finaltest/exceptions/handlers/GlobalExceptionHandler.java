@@ -1,5 +1,7 @@
 package pl.kurs.finaltest.exceptions.handlers;
 
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import org.hibernate.StaleObjectStateException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import pl.kurs.finaltest.exceptions.*;
 import pl.kurs.finaltest.exceptions.constraints.ConstraintErrorHandler;
 
+import java.io.FileNotFoundException;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
@@ -70,6 +73,16 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exceptionResponseDto);
     }
 
+    @ExceptionHandler({EmptyFileException.class})
+    public ResponseEntity<ExceptionResponseDto> handleEmptyFileException(EmptyFileException e) {
+        ExceptionResponseDto exceptionResponseDto = new ExceptionResponseDto(
+                List.of(e.getMessage()),
+                "BAD_REQUEST",
+                Timestamp.from(Instant.now())
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exceptionResponseDto);
+    }
+
     @ExceptionHandler({HttpMessageNotReadableException.class})
     public ResponseEntity<ExceptionResponseDto> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
         ExceptionResponseDto exceptionResponseDto = new ExceptionResponseDto(
@@ -105,6 +118,16 @@ public class GlobalExceptionHandler {
         ExceptionResponseDto exceptionResponseDto = constraintErrorHandlerMap.get(e.getMessage()
                 .substring(101, e.getMessage().indexOf("PUBLIC", 101) - 12))
                 .mapToExceptionResponseDto();
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(exceptionResponseDto);
+    }
+
+    @ExceptionHandler({ConstraintViolationException.class})
+    public ResponseEntity<ExceptionResponseDto> handleConstraintViolationException(ConstraintViolationException e) {
+        ExceptionResponseDto exceptionResponseDto = new ExceptionResponseDto(
+                e.getConstraintViolations().stream().map(ConstraintViolation::getMessage).collect(Collectors.toList()),
+                "BAD_REQUEST",
+                Timestamp.from(Instant.now())
+        );
         return ResponseEntity.status(HttpStatus.CONFLICT).body(exceptionResponseDto);
     }
 

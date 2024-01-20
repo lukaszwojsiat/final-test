@@ -2,6 +2,7 @@ package pl.kurs.finaltest.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
+import pl.kurs.finaltest.validations.Pesel;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -25,9 +26,11 @@ public abstract class Person implements Serializable, DtoMapClassIdentifier {
     @Column(nullable = false)
     private String lastName;
     @Column(nullable = false)
+    @Pesel
     private String pesel;
     private double height;
     private double weight;
+    @Email
     private String email;
     @Version
     private int version;

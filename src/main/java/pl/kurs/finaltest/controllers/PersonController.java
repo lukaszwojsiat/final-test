@@ -7,17 +7,25 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import pl.kurs.finaltest.exceptions.EmptyFileException;
 import pl.kurs.finaltest.models.Employee;
-import pl.kurs.finaltest.models.EmployeePosition;
 import pl.kurs.finaltest.models.Person;
 import pl.kurs.finaltest.models.commands.CreateEmployeePositionCommand;
 import pl.kurs.finaltest.models.commands.CreatePersonCommand;
 import pl.kurs.finaltest.models.commands.UpdatePersonCommand;
-import pl.kurs.finaltest.models.dto.*;
+import pl.kurs.finaltest.models.dto.EmployePositionDto;
+import pl.kurs.finaltest.models.dto.EmployeeDto;
+import pl.kurs.finaltest.models.dto.PersonDto;
+import pl.kurs.finaltest.models.dto.StatusDto;
+import pl.kurs.finaltest.services.ImportCsvService;
 import pl.kurs.finaltest.services.PersonService;
 import pl.kurs.finaltest.specifications.PersonSpecification;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.sql.Time;
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,10 +34,12 @@ import java.util.stream.Collectors;
 public class PersonController {
     private final ModelMapper modelMapper;
     private final PersonService personService;
+    private final ImportCsvService importCsvService;
 
-    public PersonController(ModelMapper modelMapper, PersonService personService) {
+    public PersonController(ModelMapper modelMapper, PersonService personService, ImportCsvService importCsvService) {
         this.modelMapper = modelMapper;
         this.personService = personService;
+        this.importCsvService = importCsvService;
     }
 
     @GetMapping
@@ -48,11 +58,10 @@ public class PersonController {
 
     @GetMapping("/{id}/positions")
     public ResponseEntity<List<EmployePositionDto>> getEmployeePositions(@PathVariable Long id) {
-        List<EmployeePosition> positions = personService.getEmployeePositions(id);
-        return ResponseEntity.ok(positions.stream()
-                .map(ep ->modelMapper.map(positions, EmployePositionDto.class))
-                .collect(Collectors.toList())
-        );
+        List<EmployePositionDto> employePositionDtos = personService.getEmployeeWithPositions(id).getPositions().stream()
+                .map(ep -> modelMapper.map(ep, EmployePositionDto.class))
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(employePositionDtos);
     }
 
 
@@ -63,16 +72,26 @@ public class PersonController {
         return ResponseEntity.status(HttpStatus.CREATED).body(modelMapper.map(savedPerson, savedPerson.dtoClassMapTo()));
     }
 
-
     @PostMapping("/upload")
-    public ResponseEntity<StatusDto> addManyAsCsvFile(@RequestParam("file") MultipartFile file) throws IOException {
-        personService.addManyAsCsvFile(file);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new StatusDto("Osoby z pliku csv zostaly dodane."));
+    public ResponseEntity<StatusDto> addManyAsCsvFile(@RequestParam("file") MultipartFile file){
+        if (file.isEmpty()) {
+            throw new EmptyFileException("Nie dodano pliku do importu");
+        }
+        if (importCsvService.getImportStarted().get()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(new StatusDto("Import nie moze zostac rozpoczety, poniewaz poprzedni jeszcze sie nie skonczyl"));
+        }
+        importCsvService.addManyAsCsvFile(file);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(new StatusDto("Rozpoczeto import " + LocalDateTime.now()));
+    }
+
+    @GetMapping("/upload")
+    public ResponseEntity<StatusDto> getImportStatus() {
+        return ResponseEntity.ok(importCsvService.getImportStatus());
     }
 
     @PostMapping("/{id}/position")
     public ResponseEntity<EmployeeDto> addPositionToEmployee(@PathVariable Long id, @RequestBody CreateEmployeePositionCommand command) {
-        Employee employee = personService.addPosition(id, command);
+        Employee employee = personService.addPositionToEmployee(id, command);
         return ResponseEntity.status(HttpStatus.CREATED).body(modelMapper.map(employee, EmployeeDto.class));
     }
 
