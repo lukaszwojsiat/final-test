@@ -1,10 +1,10 @@
 package pl.kurs.finaltest.services;
 
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import pl.kurs.finaltest.exceptions.EmptyFileException;
 import pl.kurs.finaltest.exceptions.WrongPersonInformationException;
 import pl.kurs.finaltest.models.Employee;
 import pl.kurs.finaltest.models.Person;
@@ -13,15 +13,12 @@ import pl.kurs.finaltest.models.Student;
 import pl.kurs.finaltest.models.dto.StatusDto;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.sql.Time;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Stream;
@@ -44,7 +41,7 @@ public class ImportCsvService {
 
     @Async("threadPoolTaskExecutor")
     @Transactional
-    public void addManyAsCsvFile(MultipartFile file) {
+    public Future<StatusDto> addManyAsCsvFile(MultipartFile file) {
         importStartDate = LocalDateTime.now();
         importStarted.set(true);
         try (
@@ -56,8 +53,10 @@ public class ImportCsvService {
                         personService.save(convertToCorrectTypeOfPerson(args));
                         processedRows.incrementAndGet();
                     });
+            return CompletableFuture.completedFuture(new StatusDto("Zaimportowano pomyslnie"));
         } catch (IOException e) {
             e.printStackTrace();
+            return CompletableFuture.completedFuture(new StatusDto("Napotkano blad podczaz importu"));
         } finally {
             importStarted.set(false);
             importStartDate = null;

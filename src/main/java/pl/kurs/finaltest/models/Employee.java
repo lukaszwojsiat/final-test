@@ -2,6 +2,8 @@ package pl.kurs.finaltest.models;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
+import lombok.Getter;
+import lombok.Setter;
 import pl.kurs.finaltest.models.dto.EmployeeDto;
 import pl.kurs.finaltest.models.dto.PersonDto;
 
@@ -10,6 +12,8 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+@Getter
+@Setter
 @Entity
 public class Employee extends Person {
     private static final long serialVersionUID = 1L;
@@ -27,38 +31,6 @@ public class Employee extends Person {
         this.employmentStartDate = employmentStartDate;
         this.actualPosition = actualPosition;
         this.salary = salary;
-    }
-
-    public LocalDate getEmploymentStartDate() {
-        return employmentStartDate;
-    }
-
-    public void setEmploymentStartDate(LocalDate employmentStartDate) {
-        this.employmentStartDate = employmentStartDate;
-    }
-
-    public String getActualPosition() {
-        return actualPosition;
-    }
-
-    public void setActualPosition(String position) {
-        this.actualPosition = position;
-    }
-
-    public double getActualSalary() {
-        return salary;
-    }
-
-    public void setActualSalary(double salary) {
-        this.salary = salary;
-    }
-
-    public Set<EmployeePosition> getPositions() {
-        return positions;
-    }
-
-    public void setPositions(Set<EmployeePosition> positions) {
-        this.positions = positions;
     }
 
     @Override

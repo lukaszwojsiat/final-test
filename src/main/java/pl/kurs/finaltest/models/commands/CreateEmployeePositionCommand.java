@@ -1,33 +1,20 @@
 package pl.kurs.finaltest.models.commands;
 
-import pl.kurs.finaltest.models.Employee;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDate;
 
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 public class CreateEmployeePositionCommand {
     private Long employeeId;
     private String positionName;
     private double salary;
     private LocalDate employmentStartDate;
     private LocalDate employmentEndDate;
-
-    public Long getEmployeeId() {
-        return employeeId;
-    }
-
-    public String getPositionName() {
-        return positionName;
-    }
-
-    public double getSalary() {
-        return salary;
-    }
-
-    public LocalDate getEmploymentStartDate() {
-        return employmentStartDate;
-    }
-
-    public LocalDate getEmploymentEndDate() {
-        return employmentEndDate;
-    }
 }

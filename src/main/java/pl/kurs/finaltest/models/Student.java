@@ -1,11 +1,18 @@
 package pl.kurs.finaltest.models;
 
 import jakarta.persistence.Entity;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import pl.kurs.finaltest.models.dto.PersonDto;
 import pl.kurs.finaltest.models.dto.StudentDto;
 
 import java.util.Objects;
 
+@AllArgsConstructor()
+@Getter
+@Setter
 @Entity
 public class Student extends Person {
     private static final long serialVersionUID = 1L;
@@ -22,38 +29,6 @@ public class Student extends Person {
         this.completedUniversity = completedUniversity;
         this.studyYear = studyYear;
         this.fieldOfStudy = fieldOfStudy;
-        this.scholarship = scholarship;
-    }
-
-    public String getCompletedUniversity() {
-        return completedUniversity;
-    }
-
-    public int getStudyYear() {
-        return studyYear;
-    }
-
-    public String getFieldOfStudy() {
-        return fieldOfStudy;
-    }
-
-    public double getScholarship() {
-        return scholarship;
-    }
-
-    public void setCompletedUniversity(String completedUniversity) {
-        this.completedUniversity = completedUniversity;
-    }
-
-    public void setStudyYear(int studyYear) {
-        this.studyYear = studyYear;
-    }
-
-    public void setFieldOfStudy(String fieldOfStudy) {
-        this.fieldOfStudy = fieldOfStudy;
-    }
-
-    public void setScholarship(double scholarship) {
         this.scholarship = scholarship;
     }
 

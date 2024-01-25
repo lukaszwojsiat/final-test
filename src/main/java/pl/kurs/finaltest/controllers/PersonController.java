@@ -21,12 +21,9 @@ import pl.kurs.finaltest.services.ImportCsvService;
 import pl.kurs.finaltest.services.PersonService;
 import pl.kurs.finaltest.specifications.PersonSpecification;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.sql.Time;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 @RestController
@@ -58,10 +55,10 @@ public class PersonController {
 
     @GetMapping("/{id}/positions")
     public ResponseEntity<List<EmployePositionDto>> getEmployeePositions(@PathVariable Long id) {
-        List<EmployePositionDto> employePositionDtos = personService.getEmployeeWithPositions(id).getPositions().stream()
+        List<EmployePositionDto> employeePositionDtos = personService.getEmployeeWithPositions(id).getPositions().stream()
                 .map(ep -> modelMapper.map(ep, EmployePositionDto.class))
                 .collect(Collectors.toList());
-        return ResponseEntity.ok(employePositionDtos);
+        return ResponseEntity.ok(employeePositionDtos);
     }
 
 
@@ -73,7 +70,7 @@ public class PersonController {
     }
 
     @PostMapping("/upload")
-    public ResponseEntity<StatusDto> addManyAsCsvFile(@RequestParam("file") MultipartFile file){
+    public ResponseEntity<StatusDto> addManyAsCsvFile(@RequestParam("file") MultipartFile file) {
         if (file.isEmpty()) {
             throw new EmptyFileException("Nie dodano pliku do importu");
         }

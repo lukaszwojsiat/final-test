@@ -8,7 +8,7 @@ import java.time.Instant;
 import java.util.List;
 
 @Service
-public class PersonUniqueEmailConstraintErrorHandler implements ConstraintErrorHandler{
+public class PersonUniqueEmailConstraintErrorHandler implements ConstraintErrorHandler {
     @Override
     public ExceptionResponseDto mapToExceptionResponseDto() {
         return new ExceptionResponseDto(List.of("Email not unique"), "CONFLICT", Timestamp.from(Instant.now()));
