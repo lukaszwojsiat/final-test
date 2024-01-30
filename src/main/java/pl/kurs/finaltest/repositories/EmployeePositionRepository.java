@@ -7,5 +7,4 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface EmployeePositionRepository extends JpaRepository<EmployeePosition, Long> {
-    List<EmployeePosition> findAllByEmploymentStartDateBeforeAndEmploymentEndDateAfter(LocalDate endDate, LocalDate startDate);
 }

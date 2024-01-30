@@ -25,7 +25,6 @@ public class SecurityConfig {
                 .password(passwordEncoder.encode("employee"))
                 .roles("EMPLOYEE")
                 .build();
-
         UserDetails admin = User.withUsername("admin")
                 .password(passwordEncoder.encode("admin"))
                 .roles("EMPLOYEE", "IMPORTER", "ADMIN")
@@ -48,7 +47,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/persons").hasAnyRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/persons/upload").hasAnyRole("IMPORTER")
                         .requestMatchers(HttpMethod.POST, "/api/persons/{id}/position").hasAnyRole("EMPLOYEE")
-                        .anyRequest().authenticated())
+                        .anyRequest().permitAll())
         .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .httpBasic(Customizer.withDefaults());
         return http.build();

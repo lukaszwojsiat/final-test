@@ -1,0 +1,12 @@
+Student,Imietest0,Nazwiskotest0,11111111111,0,0,test_st0@test.pl,test0,0,test0,0
+Retiree,Imietest0,Nazwiskotest0,11111111311,0,0,test_re0@test.pl,0,0
+Employee,Imietest0,Nazwiskotest0,11111111511,0,0,test_em0@test.pl,2000-01-01,test0,0
+Student,Imietest1,Nazwiskotest1,11111111112,1,1,test_st1@test.pl,test1,1,test1,1
+Retiree,Imietest1,Nazwiskotest1,11111111312,1,1,test_re1@test.pl,1,1
+Employee,Imietest1,Nazwiskotest1,11111111512,1,1,test_em1@test.pl,2000-01-01,test1,1
+Student,Imietest2,Nazwiskotest2,11111111113,2,2,test_st2@test.pl,test2,2,test2,2
+Retiree,Imietest2,Nazwiskotest2,11111111313,2,2,test_re2@test.pl,2,2
+Employee,Imietest2,Nazwiskotest2,11111111513,2,2,test_em2@test.pl,2000-01-01,test2,2
+Student,Imietest3,Nazwiskotest3,11111111114,3,3,test_st3@test.pl,test3,3,test3,3
+Retiree,Imietest3,Nazwiskotest3,11111111314,3,3,test_re3@test.pl,3,3
+Employee,Imietest3,Nazwiskotest3,11111111514,3,3,test_em3@test.pl,2000-01-01,test3,3

@@ -1,7 +1,12 @@
 package pl.kurs.finaltest.models.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDate;
 
+@Getter
+@Setter
 public class EmployeeDto extends PersonDto {
     private LocalDate employmentStartDate;
     private String actualPosition;
@@ -15,29 +20,5 @@ public class EmployeeDto extends PersonDto {
         this.employmentStartDate = employmentStartDate;
         this.actualPosition = actualPosition;
         this.actualSalary = actualSalary;
-    }
-
-    public void setEmploymentStartDate(LocalDate employmentStartDate) {
-        this.employmentStartDate = employmentStartDate;
-    }
-
-    public void setActualPosition(String actualPosition) {
-        this.actualPosition = actualPosition;
-    }
-
-    public void setActualSalary(double actualSalary) {
-        this.actualSalary = actualSalary;
-    }
-
-    public LocalDate getEmploymentStartDate() {
-        return employmentStartDate;
-    }
-
-    public String getActualPosition() {
-        return actualPosition;
-    }
-
-    public double getActualSalary() {
-        return actualSalary;
     }
 }

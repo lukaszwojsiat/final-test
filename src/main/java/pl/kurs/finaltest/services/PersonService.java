@@ -1,34 +1,23 @@
 package pl.kurs.finaltest.services;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-import pl.kurs.finaltest.exceptions.*;
-import pl.kurs.finaltest.models.*;
+import pl.kurs.finaltest.exceptions.InvalidPositionDatesException;
+import pl.kurs.finaltest.exceptions.ResourceNoFoundException;
+import pl.kurs.finaltest.exceptions.WrongTypeOfPersonException;
+import pl.kurs.finaltest.models.Employee;
+import pl.kurs.finaltest.models.EmployeePosition;
+import pl.kurs.finaltest.models.Person;
 import pl.kurs.finaltest.models.commands.CreateEmployeePositionCommand;
-import pl.kurs.finaltest.models.commands.CreateStudentCommand;
 import pl.kurs.finaltest.repositories.EmployeePositionRepository;
 import pl.kurs.finaltest.repositories.PersonRepository;
 import pl.kurs.finaltest.specifications.PersonSpecification;
 
-import javax.swing.text.html.Option;
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 
 @Service

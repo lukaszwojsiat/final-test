@@ -6,11 +6,10 @@ import org.springframework.data.jpa.repository.Query;
 import pl.kurs.finaltest.models.Employee;
 import pl.kurs.finaltest.models.Person;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface PersonRepository extends JpaRepository<Person, Long>, JpaSpecificationExecutor<Person> {
 
-    @Query(value = "select p from Person p WHERE p.type = 'Employee' and p.id = :id")
+    @Query(value = "select e from Employee e left join fetch e.positions where e.id = :id")
     Optional<Employee> getEmployeeWithPositions(Long id);
 }

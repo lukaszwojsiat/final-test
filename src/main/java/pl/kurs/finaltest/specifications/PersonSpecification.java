@@ -13,6 +13,8 @@ import pl.kurs.finaltest.models.Person;
         @Spec(path = "firstName", spec = LikeIgnoreCase.class),
         @Spec(path = "lastName", spec = LikeIgnoreCase.class),
         @Spec(path = "pesel", spec = LikeIgnoreCase.class),
+        @Spec(path = "height", params = {"heightFrom", "heightTo"}, spec = Between.class),
+        @Spec(path = "weight", params = {"weightFrom", "weightTo"}, spec = Between.class),
         @Spec(path = "email", spec = LikeIgnoreCase.class),
         @Spec(path = "employmentStartDate", params = {"employmentStartDateFrom", "employmentStartDateTo"}, spec = Between.class),
         @Spec(path = "actualPosition", spec = LikeIgnoreCase.class),

@@ -1,10 +1,14 @@
 package pl.kurs.finaltest.models;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.Objects;
 
+@Getter
+@Setter
 @Entity
 public class EmployeePosition {
     @Id
@@ -28,30 +32,6 @@ public class EmployeePosition {
         this.employmentStartDate = employmentStartDate;
         this.employmentEndDate = employmentEndDate;
         this.employee.getPositions().add(this);
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getPositionName() {
-        return positionName;
-    }
-
-    public double getSalary() {
-        return salary;
-    }
-
-    public Employee getEmployee() {
-        return employee;
-    }
-
-    public LocalDate getEmploymentStartDate() {
-        return employmentStartDate;
-    }
-
-    public LocalDate getEmploymentEndDate() {
-        return employmentEndDate;
     }
 
     @Override
