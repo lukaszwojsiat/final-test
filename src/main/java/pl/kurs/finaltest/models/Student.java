@@ -1,12 +1,11 @@
 package pl.kurs.finaltest.models;
 
 import jakarta.persistence.Entity;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.validation.constraints.Email;
+import lombok.*;
 import pl.kurs.finaltest.models.dto.PersonDto;
 import pl.kurs.finaltest.models.dto.StudentDto;
+import pl.kurs.finaltest.validations.Pesel;
 
 import java.util.Objects;
 
@@ -14,6 +13,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @Entity
+@ToString
 public class Student extends Person {
     private static final long serialVersionUID = 1L;
     private String completedUniversity;
@@ -26,6 +26,14 @@ public class Student extends Person {
 
     public Student(String firstName, String lastName, String pesel, double height, double weight, String email, String completedUniversity, Integer studyYear, String fieldOfStudy, double scholarship) {
         super(firstName, lastName, pesel, height, weight, email);
+        this.completedUniversity = completedUniversity;
+        this.studyYear = studyYear;
+        this.fieldOfStudy = fieldOfStudy;
+        this.scholarship = scholarship;
+    }
+
+    public Student(String type, String firstName, String lastName, @Pesel String pesel, double height, double weight, @Email String email, String completedUniversity, int studyYear, String fieldOfStudy, double scholarship) {
+        super(type, firstName, lastName, pesel, height, weight, email);
         this.completedUniversity = completedUniversity;
         this.studyYear = studyYear;
         this.fieldOfStudy = fieldOfStudy;

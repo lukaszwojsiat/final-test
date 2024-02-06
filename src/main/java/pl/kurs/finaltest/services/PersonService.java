@@ -26,7 +26,6 @@ public class PersonService {
     private final PersonRepository personRepository;
     private final EmployeePositionRepository employeePositionRepository;
 
-
     public PersonService(PersonRepository personRepository, EmployeePositionRepository employeePositionRepository) {
         this.personRepository = personRepository;
         this.employeePositionRepository = employeePositionRepository;
@@ -35,6 +34,11 @@ public class PersonService {
     @Transactional
     public Person save(Person person) {
         return personRepository.save(person);
+    }
+
+    @Transactional
+    public void saveAll(List<Person> persons) {
+        personRepository.saveAll(persons);
     }
 
     @Transactional

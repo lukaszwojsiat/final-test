@@ -2,10 +2,13 @@ package pl.kurs.finaltest.models;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
+import jakarta.validation.constraints.Email;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import pl.kurs.finaltest.models.dto.EmployeeDto;
 import pl.kurs.finaltest.models.dto.PersonDto;
+import pl.kurs.finaltest.validations.Pesel;
 
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -15,6 +18,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
+@ToString
 public class Employee extends Person {
     private static final long serialVersionUID = 1L;
     private LocalDate employmentStartDate;
@@ -28,6 +32,13 @@ public class Employee extends Person {
 
     public Employee(String firstName, String lastName, String pesel, double height, double weight, String email, LocalDate employmentStartDate, String actualPosition, double salary) {
         super(firstName, lastName, pesel, height, weight, email);
+        this.employmentStartDate = employmentStartDate;
+        this.actualPosition = actualPosition;
+        this.salary = salary;
+    }
+
+    public Employee(String type, String firstName, String lastName, @Pesel String pesel, double height, double weight, @Email String email, LocalDate employmentStartDate, String actualPosition, double salary) {
+        super(type, firstName, lastName, pesel, height, weight, email);
         this.employmentStartDate = employmentStartDate;
         this.actualPosition = actualPosition;
         this.salary = salary;

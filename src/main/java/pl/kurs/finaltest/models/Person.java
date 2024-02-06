@@ -2,10 +2,7 @@ package pl.kurs.finaltest.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.Setter;
+import lombok.*;
 import pl.kurs.finaltest.validations.Pesel;
 
 import java.io.Serializable;
@@ -20,12 +17,15 @@ import java.util.Objects;
         @UniqueConstraint(name = "UC_PERSON_EMAIL", columnNames = "email"),
         @UniqueConstraint(name = "UC_PERSON_PESEL", columnNames = "pesel")
 })
+@ToString
 public abstract class Person implements Serializable, DtoMapClassIdentifier {
     private static final long serialVersionUID = 1L;
     @Column(insertable = false, updatable = false)
     private String type;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seqGen")
+//    @SequenceGenerator(name = "seqGen", sequenceName = "person_seq", allocationSize = 1)
     private Long id;
     @Column(nullable = false)
     private String firstName;
@@ -42,6 +42,16 @@ public abstract class Person implements Serializable, DtoMapClassIdentifier {
     private int version;
 
     public Person() {
+    }
+
+    public Person(String type, String firstName, String lastName, @Pesel String pesel, double height, double weight, @Email String email) {
+        this.type = type;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.pesel = pesel;
+        this.height = height;
+        this.weight = weight;
+        this.email = email;
     }
 
     public Person(String firstName, String lastName, String pesel, double height, double weight, String email) {

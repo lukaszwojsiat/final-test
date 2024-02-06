@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import pl.kurs.finaltest.annotations.PersonCommandSubType;
 
+import javax.sql.DataSource;
 import java.time.format.DateTimeFormatter;
 import java.util.Set;
 

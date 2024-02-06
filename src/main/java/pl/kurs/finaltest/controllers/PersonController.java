@@ -21,9 +21,9 @@ import pl.kurs.finaltest.services.ImportCsvService;
 import pl.kurs.finaltest.services.PersonService;
 import pl.kurs.finaltest.specifications.PersonSpecification;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 @RestController
@@ -70,7 +70,7 @@ public class PersonController {
     }
 
     @PostMapping("/upload")
-    public ResponseEntity<StatusDto> addManyAsCsvFile(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<StatusDto> addManyAsCsvFile(@RequestParam("file") MultipartFile file) throws IOException {
         if (file.isEmpty()) {
             throw new EmptyFileException("Nie dodano pliku do importu");
         }
