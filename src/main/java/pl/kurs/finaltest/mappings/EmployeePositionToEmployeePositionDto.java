@@ -4,15 +4,15 @@ import org.modelmapper.Converter;
 import org.modelmapper.spi.MappingContext;
 import org.springframework.stereotype.Service;
 import pl.kurs.finaltest.models.EmployeePosition;
-import pl.kurs.finaltest.models.dto.EmployePositionDto;
+import pl.kurs.finaltest.models.dto.EmployeePositionDto;
 
 
 @Service
-public class EmployeePositionToEmployeePositionDto implements Converter<EmployeePosition, EmployePositionDto> {
+public class EmployeePositionToEmployeePositionDto implements Converter<EmployeePosition, EmployeePositionDto> {
     @Override
-    public EmployePositionDto convert(MappingContext<EmployeePosition, EmployePositionDto> mappingContext) {
+    public EmployeePositionDto convert(MappingContext<EmployeePosition, EmployeePositionDto> mappingContext) {
         EmployeePosition source = mappingContext.getSource();
-        EmployePositionDto dto = new EmployePositionDto(
+        EmployeePositionDto dto = new EmployeePositionDto(
                 source.getId(),
                 source.getEmployee().getId(),
                 source.getPositionName(),

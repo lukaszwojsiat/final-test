@@ -16,6 +16,6 @@ public class PersonUniquePeselConstraintErrorHandler implements ConstraintErrorH
 
     @Override
     public String getConstraintName() {
-        return "UC_PERSON_PESEL";
+        return "PUBLIC.UC_PERSON_PESEL";
     }
 }

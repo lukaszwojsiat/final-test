@@ -16,6 +16,6 @@ public class PersonUniqueEmailConstraintErrorHandler implements ConstraintErrorH
 
     @Override
     public String getConstraintName() {
-        return "UC_PERSON_EMAIL";
+        return "PUBLIC.UC_PERSON_EMAIL";
     }
 }

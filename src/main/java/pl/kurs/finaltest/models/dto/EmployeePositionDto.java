@@ -1,9 +1,6 @@
 package pl.kurs.finaltest.models.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import pl.kurs.finaltest.models.Employee;
 
 import java.time.LocalDate;
@@ -12,7 +9,8 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Getter
 @Setter
-public class EmployePositionDto {
+@EqualsAndHashCode
+public class EmployeePositionDto {
     private Long id;
     private Long employeeId;
     private String positionName;

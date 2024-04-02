@@ -2,19 +2,19 @@ package pl.kurs.finaltest.models;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
-import jakarta.validation.constraints.Email;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import pl.kurs.finaltest.models.dto.EmployeeDto;
 import pl.kurs.finaltest.models.dto.PersonDto;
-import pl.kurs.finaltest.validations.Pesel;
 
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+@NoArgsConstructor
 @Getter
 @Setter
 @Entity
@@ -23,25 +23,27 @@ public class Employee extends Person {
     private static final long serialVersionUID = 1L;
     private LocalDate employmentStartDate;
     private String actualPosition;
-    private double salary;
+    private double actualSalary;
     @OneToMany(mappedBy = "employee")
     private Set<EmployeePosition> positions = new HashSet<>();
 
-    public Employee() {
-    }
-
-    public Employee(String firstName, String lastName, String pesel, double height, double weight, String email, LocalDate employmentStartDate, String actualPosition, double salary) {
+    public Employee(String firstName, String lastName, String pesel, double height, double weight, String email, LocalDate employmentStartDate, String actualPosition, double actualSalary) {
         super(firstName, lastName, pesel, height, weight, email);
         this.employmentStartDate = employmentStartDate;
         this.actualPosition = actualPosition;
-        this.salary = salary;
+        this.actualSalary = actualSalary;
     }
 
-    public Employee(String type, String firstName, String lastName, @Pesel String pesel, double height, double weight, @Email String email, LocalDate employmentStartDate, String actualPosition, double salary) {
-        super(type, firstName, lastName, pesel, height, weight, email);
+    public Employee(long id, String firstName, String lastName, String pesel, double height, double weight, String email, int version, LocalDate employmentStartDate, String actualPosition, double actualSalary) {
+        super(id, firstName, lastName, pesel, height, weight, email, version);
         this.employmentStartDate = employmentStartDate;
         this.actualPosition = actualPosition;
-        this.salary = salary;
+        this.actualSalary = actualSalary;
+    }
+
+    @Override
+    public Class<? extends PersonDto> dtoClassMapTo() {
+        return EmployeeDto.class;
     }
 
     @Override
@@ -50,16 +52,11 @@ public class Employee extends Person {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         Employee employee = (Employee) o;
-        return Double.compare(employee.salary, salary) == 0 && Objects.equals(employmentStartDate, employee.employmentStartDate) && Objects.equals(actualPosition, employee.actualPosition);
+        return Double.compare(employee.actualSalary, actualSalary) == 0 && Objects.equals(employmentStartDate, employee.employmentStartDate) && Objects.equals(actualPosition, employee.actualPosition);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), employmentStartDate, actualPosition, salary);
-    }
-
-    @Override
-    public Class<? extends PersonDto> dtoClassMapTo() {
-        return EmployeeDto.class;
+        return Objects.hash(super.hashCode(), employmentStartDate, actualPosition, actualSalary);
     }
 }

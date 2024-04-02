@@ -26,7 +26,7 @@ public class EmployeeToEmployeeDto implements Converter<Employee, EmployeeDto> {
                 source.getVersion(),
                 source.getEmploymentStartDate(),
                 source.getActualPosition(),
-                source.getSalary());
+                source.getActualSalary());
 
         dto.add(linkTo(methodOn(PersonController.class).getEmployeePositions(source.getId())).withRel("his-positions"));
 

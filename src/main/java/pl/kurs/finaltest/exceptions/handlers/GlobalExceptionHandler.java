@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    private Map<String, ConstraintErrorHandler> constraintErrorHandlerMap;
+    private final Map<String, ConstraintErrorHandler> constraintErrorHandlerMap;
 
     public GlobalExceptionHandler(Set<ConstraintErrorHandler> handlers) {
         this.constraintErrorHandlerMap = handlers.stream().collect(Collectors.toMap(ConstraintErrorHandler::getConstraintName, Function.identity()));
@@ -116,7 +116,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({DataIntegrityViolationException.class})
     public ResponseEntity<ExceptionResponseDto> handleDataIntegrityViolationException(DataIntegrityViolationException e) {
         ExceptionResponseDto exceptionResponseDto = constraintErrorHandlerMap.get(e.getMessage()
-                .substring(101, e.getMessage().indexOf("PUBLIC", 101) - 12))
+                .substring(e.getMessage().indexOf("PUBLIC"), e.getMessage().indexOf("INDEX_8") - 1))
                 .mapToExceptionResponseDto();
         return ResponseEntity.status(HttpStatus.CONFLICT).body(exceptionResponseDto);
     }

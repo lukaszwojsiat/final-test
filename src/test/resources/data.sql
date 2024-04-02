@@ -1,7 +1,7 @@
-insert into person (type, first_name, last_name, pesel, height, weight, email, version, salary) values ('Employee', 'Andrzej', 'Andrzejewicz', '11111111111', 180, 100, 'test1@test.pl', 0, 0);
+insert into person (type, first_name, last_name, pesel, height, weight, email, version, actual_salary) values ('Employee', 'Andrzej', 'Andrzejewicz', '11111111111', 180, 100, 'test1@test.pl', 0, 0);
 insert into person (type, first_name, last_name, pesel, height, weight, email, version, completed_university, study_year, field_of_study, scholarship) values ('Student', 'Dariusz', 'Michalczewski', '22222222222', 190, 120, 'test2@test.pl', 0, 'Politechnika Gdanska', 2, 'Elektrotechnika', 500);
 insert into person (type, first_name, last_name, pesel, height, weight, email, version, pension, worked_years) values ('Retiree', 'Zenon', 'Krawczyk', '33333333333', 174, 84, 'test3@test.pl', 0, 2650, 45);
-insert into person (type, first_name, last_name, pesel, height, weight, email, version, employment_start_date, actual_position, salary) values ('Employee', 'Antonio', 'Banderas', '44444444444', 173, 89, 'test4@test.pl', 0, '2022-05-02', 'Elektryk', 7500);
+insert into person (type, first_name, last_name, pesel, height, weight, email, version, employment_start_date, actual_position, actual_salary) values ('Employee', 'Antonio', 'Banderas', '44444444444', 173, 89, 'test4@test.pl', 0, '2022-05-02', 'Elektryk', 7500);
 insert into person (type, first_name, last_name, pesel, height, weight, email, version, completed_university, study_year, field_of_study, scholarship) values ('Student', 'Bartosz', 'Pawlak', '55555555555', 196, 102, 'test5@test.pl', 0, 'Politechnika Warszawska', 2, 'Informatyka', 750);
 insert into person (type, first_name, last_name, pesel, height, weight, email, version, pension, worked_years) values ('Retiree', 'Karol', 'Konrad', '66666666666', 168, 75, 'test6@test.pl', 0, 2780, 40);
 

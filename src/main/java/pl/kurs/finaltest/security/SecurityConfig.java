@@ -49,8 +49,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/persons/upload").hasAnyRole("IMPORTER")
                         .requestMatchers(HttpMethod.POST, "/api/persons/{id}/position").hasAnyRole("EMPLOYEE")
                         .anyRequest().permitAll())
-        .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .httpBasic(Customizer.withDefaults());
+                .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .httpBasic(Customizer.withDefaults());
         return http.build();
     }
 

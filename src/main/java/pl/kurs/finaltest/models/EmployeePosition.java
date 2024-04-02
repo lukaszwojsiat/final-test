@@ -34,6 +34,26 @@ public class EmployeePosition {
         this.employee.getPositions().add(this);
     }
 
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
+    }
+
+    public void setPositionName(String positionName) {
+        this.positionName = positionName;
+    }
+
+    public void setSalary(double salary) {
+        this.salary = salary;
+    }
+
+    public void setEmploymentStartDate(LocalDate employmentStartDate) {
+        this.employmentStartDate = employmentStartDate;
+    }
+
+    public void setEmploymentEndDate(LocalDate employmentEndDate) {
+        this.employmentEndDate = employmentEndDate;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

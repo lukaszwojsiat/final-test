@@ -7,7 +7,7 @@ Employee,Imietest1,Nazwiskotest1,33333333334,1,1,test_em1@test.pl,2000-01-01,tes
 Student,Imietest2,Nazwiskotest2,11111111113,2,2,test_st2@test.pl,test2,2,test2,2
 Retiree,Imietest2,Nazwiskotest2,22222222224,2,2,test_re2@test.pl,2,2
 Employee,Imietest2,Nazwiskotest2,33333333335,2,2,test_em2@test.pl,2000-01-01,test2,2
-Student,Imietest3,Nazwiskotest3,11111111114,3,3,test_st3@test.pl,test3,3,test3,3
+Stuudent,Imietest3,Nazwiskotest3,11111111114,3,3,test_st3@test.pl,test3,3,test3,3
 Retiree,Imietest3,Nazwiskotest3,22222222225,3,3,test_re3@test.pl,3,3
 Employee,Imietest3,Nazwiskotest3,33333333336,3,3,test_em3@test.pl,2000-01-01,test3,3
 Student,Imietest4,Nazwiskotest4,11111111115,4,4,test_st4@test.pl,test4,4,test4,4
