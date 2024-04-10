@@ -9,7 +9,6 @@ import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,21 +21,19 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import pl.kurs.finaltest.FinalTestApplication;
-import pl.kurs.finaltest.exceptions.ExceptionResponseDto;
-import pl.kurs.finaltest.models.Student;
-import pl.kurs.finaltest.models.commands.CreateEmployeePositionCommand;
 import pl.kurs.finaltest.models.commands.PersonCommand;
-import pl.kurs.finaltest.models.dto.*;
+import pl.kurs.finaltest.models.dto.EmployeeDto;
+import pl.kurs.finaltest.models.dto.PersonDto;
+import pl.kurs.finaltest.models.dto.StudentDto;
 
-import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = FinalTestApplication.class)
@@ -80,9 +77,8 @@ class PersonControllerIT {
                 .getContentAsString();
         JsonNode jsonNode = objectMapper.readTree(responseBefore);
         String content = jsonNode.get("content").toString();
-        List<PersonDto> emptyList = objectMapper.readValue(content, new TypeReference<>() {
+        List<StudentDto> listBeforePost = objectMapper.readValue(content, new TypeReference<>() {
         });
-        assertTrue(emptyList.isEmpty());
 
         //when
         mvc.perform(MockMvcRequestBuilders.post("/api/persons")
@@ -91,7 +87,7 @@ class PersonControllerIT {
                 .andExpect(status().isCreated());
 
         //then
-        mvc.perform(MockMvcRequestBuilders.get("/api/persons").param("pesel", "99999999999"))
+        String responseAfter = mvc.perform(MockMvcRequestBuilders.get("/api/persons").param("pesel", "99999999999"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("content[0].firstName").value("test"))
                 .andExpect(jsonPath("content[0].lastName").value("test"))
@@ -106,24 +102,29 @@ class PersonControllerIT {
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
+        JsonNode jsonNodeAfter = objectMapper.readTree(responseAfter);
+        String contentAfter = jsonNodeAfter.get("content").toString();
+        List<StudentDto> listAfterPost = objectMapper.readValue(contentAfter, new TypeReference<>() {
+        });
+        assertNotEquals(listBeforePost.size(), listAfterPost.size());
     }
 
     @WithMockUser(roles = "ADMIN")
     @Test
     void givenBodyWithStudentWithWrongPeselAndEmail_whenPostRequestExecuted_thenBadRequestReceived() throws Exception {
         //given
-        String responseBefore = mvc.perform(MockMvcRequestBuilders.get("/api/persons").param("pesel", "9999999999999"))
+        String responseBefore = mvc.perform(MockMvcRequestBuilders.get("/api/persons").param("pesel", "99999999999"))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
         JsonNode jsonNode = objectMapper.readTree(responseBefore);
         String content = jsonNode.get("content").toString();
-        List<PersonDto> emptyList = objectMapper.readValue(content, new TypeReference<>() {
+        List<StudentDto> listBeforePost = objectMapper.readValue(content, new TypeReference<>() {
         });
-        assertTrue(emptyList.isEmpty());
 
-        studentCommandForTests.getParameters().replace("pesel", "9999999999999");
+        studentCommandForTests.getParameters().replace("pesel", "999999999999911");
+        studentCommandForTests.getParameters().replace("email", "111");
         String json = objectMapper.writeValueAsString(studentCommandForTests);
 
         //when
@@ -144,16 +145,16 @@ class PersonControllerIT {
                 .getContentAsString();
         JsonNode jsonNodeAfterPost = objectMapper.readTree(responseAfter);
         String contentAfterPost = jsonNodeAfterPost.get("content").toString();
-        List<StudentDto> listWithStudent = objectMapper.readValue(contentAfterPost, new TypeReference<>() {
+        List<StudentDto> listAfterPost = objectMapper.readValue(contentAfterPost, new TypeReference<>() {
         });
-        assertTrue(listWithStudent.isEmpty());
+        assertEquals(listBeforePost.size(), listAfterPost.size());
     }
 
 
     @Test
     void givenPostRequestWithoutAuthorization_then401ReceiveAndNoPostExecuted() throws Exception {
         //given
-        studentCommandForTests.getParameters().replace("pesel", "9999999999998");
+        studentCommandForTests.getParameters().replace("pesel", "99999999998");
         String json = objectMapper.writeValueAsString(studentCommandForTests);
 
         //when
@@ -180,7 +181,7 @@ class PersonControllerIT {
     void givenPostRequestWithNoTypeBody_then400ReceiveAndNoPostExecuted() throws Exception {
         //given
         studentCommandForTests.setName(null);
-        studentCommandForTests.getParameters().replace("pesel", "9999999999997");
+        studentCommandForTests.getParameters().replace("pesel", "99999999997");
         String json = objectMapper.writeValueAsString(studentCommandForTests);
 
         //when
@@ -190,7 +191,7 @@ class PersonControllerIT {
                 .andExpect(status().isBadRequest());
 
         //then
-        String responseAfter = mvc.perform(MockMvcRequestBuilders.get("/api/persons").param("pesel", "9999999999997"))
+        String responseAfter = mvc.perform(MockMvcRequestBuilders.get("/api/persons").param("pesel", "99999999997"))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse()
@@ -331,156 +332,91 @@ class PersonControllerIT {
         assertNotEquals(studentAfterEdit, studentBeforeEdit);
     }
 
+    @WithMockUser(roles = "ADMIN")
     @Test
-    void givenGetPositionsRequest_whenRetrieveEmployeePositions_thenIsOk() throws Exception {
-        //when
-        //then
-        mvc.perform(MockMvcRequestBuilders.get("/api/persons/employee/1/positions"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].positionName").value("Architekt"))
-                .andExpect(jsonPath("$[0].salary").value(5000))
-                .andExpect(jsonPath("$[0].employmentStartDate").value("2010-08-11"))
-                .andExpect(jsonPath("$[0].employmentEndDate").value("2014-01-31"))
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
-    }
-
-    @Test
-    void givenGetPositionsRequestWithWrongId_thenIsOk() throws Exception {
-        //when
-        //then
-        mvc.perform(MockMvcRequestBuilders.get("/api/persons/employee/2/positions"))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.errorsMessages").value("Podano zlego pracownika"))
-                .andExpect(jsonPath("$.errorCode").value("BAD_REQUEST"))
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
-    }
-
-    @WithMockUser(roles = "EMPLOYEE")
-    @Test
-    void givenPostPositionRequest_whenRequestExecuted_thenIsCreated() throws Exception {
-        //given
-        String responseBeforePost = mvc.perform(MockMvcRequestBuilders.get("/api/persons/employee/1/positions"))
+    void givenBodyWithStudentWithNoChanges_whenPutRequestExecuted_thenIsBadRequest() throws Exception {
+        //Given
+        String jsonBeforePut = mvc.perform(MockMvcRequestBuilders.get("/api/persons/2"))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
-        List<EmployeePositionDto> positionsBeforePost = objectMapper.readValue(responseBeforePost, new TypeReference<>() {
-        });
-        CreateEmployeePositionCommand command = new CreateEmployeePositionCommand(
-                1L,
-                "Projektant",
-                2500,
-                LocalDate.of(2009, 1, 1),
-                LocalDate.of(2010, 7, 31)
-        );
+        StudentDto studentBeforeEdit = objectMapper.readValue(jsonBeforePut, StudentDto.class);
+
+
         //when
-        mvc.perform(MockMvcRequestBuilders.post("/api/persons/employee/1/position")
+        studentCommandForTests.getParameters().replace("firstName", studentBeforeEdit.getFirstName());
+        studentCommandForTests.getParameters().replace("lastName", studentBeforeEdit.getLastName());
+        studentCommandForTests.getParameters().replace("pesel", studentBeforeEdit.getPesel());
+        studentCommandForTests.getParameters().replace("email", studentBeforeEdit.getEmail());
+        studentCommandForTests.getParameters().replace("height", studentBeforeEdit.getHeight());
+        studentCommandForTests.getParameters().replace("weight", studentBeforeEdit.getWeight());
+        studentCommandForTests.getParameters().replace("completedUniversity", studentBeforeEdit.getCompletedUniversity());
+        studentCommandForTests.getParameters().replace("studyYear", studentBeforeEdit.getStudyYear());
+        studentCommandForTests.getParameters().replace("fieldOfStudy", studentBeforeEdit.getFieldOfStudy());
+        studentCommandForTests.getParameters().replace("scholarship", studentBeforeEdit.getScholarship());
+        studentCommandForTests.getParameters().put("id", studentBeforeEdit.getId());
+        studentCommandForTests.getParameters().put("version", studentBeforeEdit.getVersion());
+        jsonWithStudentCommand = objectMapper.writeValueAsString(studentCommandForTests);
+
+        mvc.perform(MockMvcRequestBuilders.put("/api/persons/" + studentBeforeEdit.getId())
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(command)))
-                .andExpect(status().isCreated())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
-        //then
-        String responseAfterPost = mvc.perform(MockMvcRequestBuilders.get("/api/persons/employee/1/positions"))
-                .andExpect(status().isOk())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
-        List<EmployeePositionDto> positionsAfterPost = objectMapper.readValue(responseAfterPost, new TypeReference<>() {
-        });
-        EmployeePositionDto positionDto = positionsAfterPost.stream().filter(p -> p.getPositionName().equals("Projektant")).findAny().orElseThrow();
-        assertNotEquals(positionsBeforePost.size(), positionsAfterPost.size());
-        assertEquals(positionDto.getEmployeeId(), command.getEmployeeId());
-        assertEquals(positionDto.getPositionName(), command.getPositionName());
-        assertEquals(positionDto.getSalary(), command.getSalary());
-        assertEquals(positionDto.getEmploymentStartDate(), command.getEmploymentStartDate());
-        assertEquals(positionDto.getEmploymentEndDate(), command.getEmploymentEndDate());
-    }
-
-    @WithMockUser(roles = "EMPLOYEE")
-    @Test
-    void givenPostWithWrongPositionRequest_whenRequestExecuted_thenBadRequest() throws Exception {
-        //given
-        String responseBeforePost = mvc.perform(MockMvcRequestBuilders.get("/api/persons/employee/1/positions"))
-                .andExpect(status().isOk())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
-        List<EmployeePositionDto> positionsBeforePost = objectMapper.readValue(responseBeforePost, new TypeReference<>() {
-        });
-        CreateEmployeePositionCommand command = new CreateEmployeePositionCommand(
-                1L,
-                "Malarz",
-                2500,
-                LocalDate.of(2010, 8, 11),
-                LocalDate.of(2013, 5, 12)
-        );
-        //when
-        mvc.perform(MockMvcRequestBuilders.post("/api/persons/employee/1/position")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(command)))
+                .content(jsonWithStudentCommand))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.errorCode").value("BAD_REQUEST"))
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
+
         //then
-        String responseAfterPost = mvc.perform(MockMvcRequestBuilders.get("/api/persons/employee/1/positions"))
+        String result = mvc.perform(MockMvcRequestBuilders.get("/api/persons/" + studentBeforeEdit.getId())
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
-        List<EmployeePositionDto> positionsAfterPost = objectMapper.readValue(responseAfterPost, new TypeReference<>() {
-        });
-        Optional<EmployeePositionDto> positionDto = positionsAfterPost.stream().filter(p -> p.getPositionName().equals("Malarz")).findAny();
-        assertTrue(positionDto.isEmpty());
-        assertEquals(positionsBeforePost.size(), positionsAfterPost.size());
+        StudentDto studentAfterEdit = objectMapper.readValue(result, StudentDto.class);
+        assertEquals(studentAfterEdit, studentBeforeEdit);
     }
 
     @WithMockUser(roles = "IMPORTER")
     @Test
     void givenPostUploadRequest_ThenAccepted() throws Exception {
         //given
-        String contentToUpload = "Student,Imietest0,Nazwiskotest0,21311111111,0,0,test_st0@test.pl,test0,0,test0,0\n" +
+        String contentToImport = "Student,Imietest0,Nazwiskotest0,21311111111,0,0,test_st0@test.pl,test0,0,test0,0\n" +
                 "Retiree,Imietest0,Nazwiskotest0,21311111311,0,0,test_re0@test.pl,0,0\n" +
                 "Employee,Imietest0,Nazwiskotest0,21311111511,0,0,test_em0@test.pl,2000-01-01,test0,0";
-        MockMultipartFile file = new MockMultipartFile("file", "persons-test-file.csv", MediaType.TEXT_PLAIN_VALUE, contentToUpload.getBytes());
-        String resultBeforeUpload = mvc.perform(MockMvcRequestBuilders.get("/api/persons").param("firstName", "Imietest0"))
+        MockMultipartFile file = new MockMultipartFile("file", "persons-test-file.csv", MediaType.TEXT_PLAIN_VALUE, contentToImport.getBytes());
+        String resultBeforeImport = mvc.perform(MockMvcRequestBuilders.get("/api/persons").param("firstName", "Imietest0"))
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
-        JsonNode jsonNodeBeforeUpload = objectMapper.readTree(resultBeforeUpload);
-        String contentBeforeUpload = jsonNodeBeforeUpload.get("content").toString();
-        List<PersonDto> emptyList = objectMapper.readValue(contentBeforeUpload, new TypeReference<>() {
+        JsonNode jsonNodeBeforeImport = objectMapper.readTree(resultBeforeImport);
+        String contentBeforeImport = jsonNodeBeforeImport.get("content").toString();
+        List<PersonDto> emptyList = objectMapper.readValue(contentBeforeImport, new TypeReference<>() {
         });
         assertTrue(emptyList.isEmpty());
 
         //when
-        String uploadResponse = mvc.perform(MockMvcRequestBuilders.multipart("/api/persons/upload")
+        String importResponse = mvc.perform(MockMvcRequestBuilders.multipart("/api/persons/import")
                 .file(file))
                 .andExpect(status().isAccepted())
                 .andExpect(jsonPath("$.status", Matchers.startsWith("Rozpoczeto import ")))
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
-        int uploadStatsId = Integer.parseInt(uploadResponse.substring(uploadResponse.lastIndexOf(' ') + 1, uploadResponse.lastIndexOf('"')));
-        mvc.perform(MockMvcRequestBuilders.get("/api/persons/upload/status/" + uploadStatsId))
+        int importStatusId = Integer.parseInt(importResponse.substring(importResponse.lastIndexOf(' ') + 1, importResponse.lastIndexOf('"')));
+        mvc.perform(MockMvcRequestBuilders.get("/api/persons/import-status/" + importStatusId))
                 .andExpect(status().isOk());
         Thread.sleep(100);
 
         //then
-        String resultAfterUpload = mvc.perform(MockMvcRequestBuilders.get("/api/persons").param("firstName", "Imietest0"))
+        String resultAfterImport = mvc.perform(MockMvcRequestBuilders.get("/api/persons").param("firstName", "Imietest0"))
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
-        JsonNode jsonNodeAfterUpload = objectMapper.readTree(resultAfterUpload);
-        String contentAfterUpload = jsonNodeAfterUpload.get("content").toString();
-        List listWithPersons = objectMapper.readValue(contentAfterUpload, new TypeReference<>() {
+        JsonNode jsonNodeAfterImport = objectMapper.readTree(resultAfterImport);
+        String contentAfterImport = jsonNodeAfterImport.get("content").toString();
+        List listWithPersons = objectMapper.readValue(contentAfterImport, new TypeReference<>() {
         });
         assertEquals(3, listWithPersons.size());
     }

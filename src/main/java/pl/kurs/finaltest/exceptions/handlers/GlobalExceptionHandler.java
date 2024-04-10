@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import pl.kurs.finaltest.exceptions.*;
 import pl.kurs.finaltest.exceptions.constraints.ConstraintErrorHandler;
 
-import java.io.FileNotFoundException;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
@@ -53,8 +52,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exceptionResponseDto);
     }
 
-    @ExceptionHandler({IllegalArgumentException.class})
-    public ResponseEntity<ExceptionResponseDto> handleIllegalArgumentException(IllegalArgumentException e) {
+    @ExceptionHandler({InvalidPositionDatesException.class})
+    public ResponseEntity<ExceptionResponseDto> handleInvalidPositionDatesException(InvalidPositionDatesException e) {
         ExceptionResponseDto exceptionResponseDto = new ExceptionResponseDto(
                 List.of(e.getMessage()),
                 "BAD_REQUEST",
@@ -63,8 +62,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exceptionResponseDto);
     }
 
-    @ExceptionHandler({InvalidPositionDatesException.class})
-    public ResponseEntity<ExceptionResponseDto> handleInvalidPositionDatesException(InvalidPositionDatesException e) {
+    @ExceptionHandler({MissingUpdateException.class})
+    public ResponseEntity<ExceptionResponseDto> handleMissingUpdateException(MissingUpdateException e) {
         ExceptionResponseDto exceptionResponseDto = new ExceptionResponseDto(
                 List.of(e.getMessage()),
                 "BAD_REQUEST",

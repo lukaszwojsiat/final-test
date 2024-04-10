@@ -6,22 +6,22 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pl.kurs.finaltest.exceptions.InvalidPositionDatesException;
+import pl.kurs.finaltest.exceptions.MissingUpdateException;
 import pl.kurs.finaltest.exceptions.ResourceNoFoundException;
 import pl.kurs.finaltest.exceptions.WrongPersonInformationException;
 import pl.kurs.finaltest.exceptions.WrongTypeOfPersonException;
 import pl.kurs.finaltest.factories.specifications.PersonSpecificationFactory;
 import pl.kurs.finaltest.factories.sqlcreators.SqlFactory;
-import pl.kurs.finaltest.models.*;
-import pl.kurs.finaltest.models.commands.CreateEmployeePositionCommand;
+import pl.kurs.finaltest.models.Employee;
+import pl.kurs.finaltest.models.ImportStatus;
+import pl.kurs.finaltest.models.Person;
+import pl.kurs.finaltest.models.Status;
 import pl.kurs.finaltest.models.commands.PersonCommand;
-import pl.kurs.finaltest.repositories.EmployeePositionRepository;
 import pl.kurs.finaltest.repositories.PersonRepository;
 import pl.kurs.finaltest.validations.validators.EntityValidator;
 
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
@@ -29,15 +29,13 @@ import java.util.stream.Stream;
 public class PersonService {
 
     private final PersonRepository personRepository;
-    private final EmployeePositionRepository employeePositionRepository;
     private final PersonSpecificationFactory personSpecificationFactory;
     private final SqlFactory sqlFactory;
     private final ImportService importService;
     private final Map<String, EntityValidator> validators;
 
-    public PersonService(PersonRepository personRepository, EmployeePositionRepository employeePositionRepository, PersonSpecificationFactory personSpecificationFactory, SqlFactory sqlFactory, ImportService importService, Map<String, EntityValidator> validators) {
+    public PersonService(PersonRepository personRepository, PersonSpecificationFactory personSpecificationFactory, SqlFactory sqlFactory, ImportService importService, Map<String, EntityValidator> validators) {
         this.personRepository = personRepository;
-        this.employeePositionRepository = employeePositionRepository;
         this.personSpecificationFactory = personSpecificationFactory;
         this.sqlFactory = sqlFactory;
         this.importService = importService;
@@ -63,7 +61,10 @@ public class PersonService {
         } else if (!person.getClass().equals(personToEdit.getClass()))
             throw new WrongTypeOfPersonException("Podano zły typ do edycji: " + personToEdit.getClass().getSimpleName() +
                     ", typ z bazy danych o danym id: " + person.getClass().getSimpleName());
-        return personRepository.save(personToEdit);
+        Person updatedPerson = personRepository.saveAndFlush(personToEdit);
+        if (updatedPerson.getVersion() == personToEdit.getVersion())
+            throw new MissingUpdateException("Osoba nie została zaaktualizowana, sprawdź dane do edycji.");
+        return updatedPerson;
     }
 
     @Transactional(readOnly = true)
@@ -86,38 +87,17 @@ public class PersonService {
     @Transactional(readOnly = true)
     public Employee getEmployeeWithPositions(Long id) {
         return personRepository.getEmployeeWithPositions(id)
-                .orElseThrow(() -> new WrongTypeOfPersonException("Podano zlego pracownika"));
+                .orElseThrow(() -> new WrongTypeOfPersonException("Nie znaleziono pracownika"));
     }
 
     @Transactional
-    public Employee addPositionToEmployee(Long id, CreateEmployeePositionCommand command) {
-        Employee employee = getEmployeeWithPositions(id);
-        List<EmployeePosition> positions = employee.getPositions().stream()
-                .filter(p -> p.getEmploymentStartDate().isBefore(command.getEmploymentEndDate().plusDays(1L)) && p.getEmploymentEndDate().isAfter(command.getEmploymentStartDate().minusDays(1L)))
-                .collect(Collectors.toList());
-        if (!positions.isEmpty()) {
-            throw new InvalidPositionDatesException("Nie mozna przypisac nowego stanowiska w tym samym czasie co inne stanowisko: " + command.getEmploymentStartDate()
-                    + " - " + command.getEmploymentEndDate());
-        }
-        EmployeePosition employeePosition = new EmployeePosition(
-                employee,
-                command.getPositionName(),
-                command.getSalary(),
-                command.getEmploymentStartDate(),
-                command.getEmploymentEndDate()
-        );
-        if ((LocalDate.now().isAfter(employeePosition.getEmploymentStartDate().minusDays(1L))) && (LocalDate.now().isBefore(employeePosition.getEmploymentEndDate().plusDays(1L)))) {
-            employee.setActualPosition(employeePosition.getPositionName());
-            employee.setActualPosition(employeePosition.getPositionName());
-            personRepository.save(employee);
-        }
-        employeePositionRepository.save(employeePosition);
-        return employee;
+    public Employee getEmployeeWithPositionsWithLocking(Long id) {
+        return personRepository.getEmployeeWithPositionsWithLocking(id).orElseThrow(() -> new ResourceNoFoundException("Nie znaleziono pracownika"));
     }
 
     @Async("threadPoolTaskExecutor")
     @Transactional
-    public synchronized void addManyAsCsvFile(Stream<String> lines, ImportStatus importStatus) {
+    public void addManyAsCsvFile(Stream<String> lines, ImportStatus importStatus) {
         importStatus.setStatus(Status.PROCESSING);
         importStatus.setStartData(LocalDate.now());
         importService.save(importStatus);
@@ -168,5 +148,4 @@ public class PersonService {
         if (!errors.isEmpty())
             throw new WrongPersonInformationException(errors.toString());
     }
-
 }

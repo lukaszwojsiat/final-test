@@ -6,19 +6,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pl.kurs.finaltest.exceptions.EmptyFileException;
 import pl.kurs.finaltest.factories.entitycreators.PersonFactory;
-import pl.kurs.finaltest.models.Employee;
 import pl.kurs.finaltest.models.ImportStatus;
 import pl.kurs.finaltest.models.Person;
 import pl.kurs.finaltest.models.Status;
-import pl.kurs.finaltest.models.commands.CreateEmployeePositionCommand;
 import pl.kurs.finaltest.models.commands.PersonCommand;
-import pl.kurs.finaltest.models.dto.EmployeeDto;
-import pl.kurs.finaltest.models.dto.EmployeePositionDto;
 import pl.kurs.finaltest.models.dto.PersonDto;
 import pl.kurs.finaltest.models.dto.StatusDto;
 import pl.kurs.finaltest.services.ImportService;
@@ -28,9 +23,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @RestController
@@ -62,14 +55,6 @@ public class PersonController {
         return ResponseEntity.ok(modelMapper.map(person, person.dtoClassMapTo()));
     }
 
-    @GetMapping("/employee/{id}/positions")
-    public ResponseEntity<List<EmployeePositionDto>> getEmployeePositions(@PathVariable Long id) {
-        List<EmployeePositionDto> employeePositionDtos = personService.getEmployeeWithPositions(id).getPositions().stream()
-                .map(ep -> modelMapper.map(ep, EmployeePositionDto.class))
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(employeePositionDtos);
-    }
-
     @PostMapping
     public ResponseEntity<PersonDto> createPerson(@RequestBody @Valid PersonCommand dataToAdd) {
         personService.validateToSave(dataToAdd);
@@ -78,7 +63,7 @@ public class PersonController {
         return ResponseEntity.status(HttpStatus.CREATED).body(modelMapper.map(savedPerson, savedPerson.dtoClassMapTo()));
     }
 
-    @PostMapping("/upload")
+    @PostMapping("/import")
     public ResponseEntity<StatusDto> addManyAsCsvFile(@RequestParam("file") MultipartFile file) throws IOException {
         if (file.isEmpty()) {
             throw new EmptyFileException("Nie dodano pliku do importu");
@@ -89,17 +74,10 @@ public class PersonController {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(new StatusDto("Rozpoczeto import o id: " + importStatus.getId()));
     }
 
-    @GetMapping("/upload/status/{id}")
-    @Transactional
+    @GetMapping("/import-status/{id}")
     public ResponseEntity<ImportStatus> getImportStatus(@PathVariable Long id) {
         ImportStatus importStatus = importService.findById(id);
         return ResponseEntity.ok(importStatus);
-    }
-
-    @PostMapping("/employee/{id}/position")
-    public ResponseEntity<EmployeeDto> addPositionToEmployee(@PathVariable Long id, @RequestBody CreateEmployeePositionCommand command) {
-        Employee employee = personService.addPositionToEmployee(id, command);
-        return ResponseEntity.status(HttpStatus.CREATED).body(modelMapper.map(employee, EmployeeDto.class));
     }
 
     @PutMapping("/{id}")

@@ -3,7 +3,7 @@ package pl.kurs.finaltest.mappings;
 import org.modelmapper.Converter;
 import org.modelmapper.spi.MappingContext;
 import org.springframework.stereotype.Service;
-import pl.kurs.finaltest.controllers.PersonController;
+import pl.kurs.finaltest.controllers.EmployeePositionController;
 import pl.kurs.finaltest.models.Employee;
 import pl.kurs.finaltest.models.dto.EmployeeDto;
 
@@ -28,7 +28,7 @@ public class EmployeeToEmployeeDto implements Converter<Employee, EmployeeDto> {
                 source.getActualPosition(),
                 source.getActualSalary());
 
-        dto.add(linkTo(methodOn(PersonController.class).getEmployeePositions(source.getId())).withRel("his-positions"));
+        dto.add(linkTo(methodOn(EmployeePositionController.class).getEmployeePositionsByEmployeeId(source.getId())).withRel("his-positions"));
 
         return dto;
     }
